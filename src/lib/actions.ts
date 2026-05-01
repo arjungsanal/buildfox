@@ -92,6 +92,16 @@ export async function signIn(email: string) {
   if (error) throw error
 }
 
+export async function signInWithPassword(email: string, password: string) {
+  if (!process.env.ADMIN_EMAIL || email !== process.env.ADMIN_EMAIL) {
+    throw new Error('Unauthorized')
+  }
+  const supabase = await createClient()
+  const { error } = await supabase.auth.signInWithPassword({ email, password })
+  if (error) throw new Error('Invalid email or password')
+  redirect('/admin')
+}
+
 export async function signOut() {
   const supabase = await createClient()
   await supabase.auth.signOut()

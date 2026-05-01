@@ -1,10 +1,14 @@
 'use client'
 
 import { useState } from 'react'
-import { signIn } from '@/lib/actions'
+import { signIn, signInWithPassword } from '@/lib/actions'
+
+type Mode = 'password' | 'magic'
 
 export default function LoginPage() {
+  const [mode, setMode] = useState<Mode>('password')
   const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [sent, setSent] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -14,13 +18,40 @@ export default function LoginPage() {
     setLoading(true)
     setError('')
     try {
-      await signIn(email)
-      setSent(true)
+      if (mode === 'password') {
+        await signInWithPassword(email, password)
+      } else {
+        await signIn(email)
+        setSent(true)
+      }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Something went wrong')
     } finally {
       setLoading(false)
     }
+  }
+
+  const inputStyle = {
+    fontFamily: 'var(--font-mono)',
+    fontSize: 13,
+    color: 'var(--text)',
+    background: 'var(--bg3)',
+    border: '1px solid var(--border)',
+    borderRadius: 8,
+    padding: '10px 14px',
+    outline: 'none',
+    transition: 'border-color 0.2s',
+    width: '100%',
+    boxSizing: 'border-box' as const,
+  }
+
+  const labelStyle = {
+    fontFamily: 'var(--font-mono)',
+    fontSize: 10,
+    fontWeight: 600,
+    letterSpacing: '0.1em',
+    textTransform: 'uppercase' as const,
+    color: 'var(--text-muted)',
   }
 
   return (
@@ -61,11 +92,49 @@ export default function LoginPage() {
             fontFamily: 'var(--font-mono)',
             fontSize: 12,
             color: 'var(--text-muted)',
-            marginBottom: 32,
+            marginBottom: 28,
           }}
         >
-          Enter your email to receive a magic link.
+          {mode === 'password' ? 'Sign in with your password.' : 'Receive a one-time magic link by email.'}
         </p>
+
+        {/* Mode toggle */}
+        <div
+          style={{
+            display: 'flex',
+            gap: 4,
+            background: 'var(--bg3)',
+            border: '1px solid var(--border)',
+            borderRadius: 8,
+            padding: 4,
+            marginBottom: 24,
+          }}
+        >
+          {(['password', 'magic'] as Mode[]).map(m => (
+            <button
+              key={m}
+              type="button"
+              onClick={() => { setMode(m); setError(''); setSent(false) }}
+              style={{
+                flex: 1,
+                fontFamily: 'var(--font-mono)',
+                fontSize: 10,
+                fontWeight: 600,
+                letterSpacing: '0.08em',
+                textTransform: 'uppercase',
+                border: 'none',
+                borderRadius: 6,
+                padding: '7px 0',
+                cursor: 'pointer',
+                transition: 'background 0.15s, color 0.15s',
+                background: mode === m ? 'var(--accent)' : 'transparent',
+                color: mode === m ? 'oklch(10% 0.01 30)' : 'var(--text-muted)',
+              }}
+            >
+              {m === 'password' ? 'Password' : 'Magic link'}
+            </button>
+          ))}
+        </div>
 
         {sent ? (
           <div
@@ -84,19 +153,7 @@ export default function LoginPage() {
         ) : (
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <label
-                htmlFor="email"
-                style={{
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: 10,
-                  fontWeight: 600,
-                  letterSpacing: '0.1em',
-                  textTransform: 'uppercase',
-                  color: 'var(--text-muted)',
-                }}
-              >
-                Email
-              </label>
+              <label htmlFor="email" style={labelStyle}>Email</label>
               <input
                 id="email"
                 type="email"
@@ -104,24 +161,33 @@ export default function LoginPage() {
                 onChange={e => setEmail(e.target.value)}
                 required
                 placeholder="you@example.com"
-                style={{
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: 13,
-                  color: 'var(--text)',
-                  background: 'var(--bg3)',
-                  border: '1px solid var(--border)',
-                  borderRadius: 8,
-                  padding: '10px 14px',
-                  outline: 'none',
-                  transition: 'border-color 0.2s',
-                }}
+                style={inputStyle}
                 onFocus={e => (e.target.style.borderColor = 'var(--accent)')}
                 onBlur={e => (e.target.style.borderColor = 'var(--border)')}
               />
             </div>
 
+            {mode === 'password' && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                <label htmlFor="password" style={labelStyle}>Password</label>
+                <input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  required
+                  placeholder="••••••••"
+                  style={inputStyle}
+                  onFocus={e => (e.target.style.borderColor = 'var(--accent)')}
+                  onBlur={e => (e.target.style.borderColor = 'var(--border)')}
+                />
+              </div>
+            )}
+
             {error && (
-              <p style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: '#ef4444' }}>{error}</p>
+              <p style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: '#ef4444', margin: 0 }}>
+                {error}
+              </p>
             )}
 
             <button
@@ -142,7 +208,11 @@ export default function LoginPage() {
                 transition: 'filter 0.2s',
               }}
             >
-              {loading ? 'Sending...' : 'Send magic link'}
+              {loading
+                ? 'Please wait...'
+                : mode === 'password'
+                  ? 'Sign in'
+                  : 'Send magic link'}
             </button>
           </form>
         )}
