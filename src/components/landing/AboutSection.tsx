@@ -121,7 +121,7 @@ export default function AboutSection({ settings }: Props) {
                   },
                   {
                     label: 'Stack',
-                    val: 'TypeScript · Next.js · Postgres · Tailwind · Vercel. Whatever ships fastest without cutting corners.',
+                    val: 'The right tool for the job. Boring technology where it counts, new where it matters.',
                   },
                 ].map(fact => (
                   <div
