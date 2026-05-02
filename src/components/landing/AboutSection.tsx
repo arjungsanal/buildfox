@@ -117,7 +117,7 @@ export default function AboutSection({ settings }: Props) {
                   },
                   {
                     label: "What I'm building",
-                    val: 'Payment tooling for Indian freelancers. Open-source infrastructure for indie devs. More coming.',
+                    val: 'Small, focused tools that solve real problems — built in public, shipped with care.',
                   },
                   {
                     label: 'Stack',

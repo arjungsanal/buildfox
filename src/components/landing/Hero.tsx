@@ -111,7 +111,7 @@ export default function Hero() {
               animation: 'blink 2s ease-in-out infinite',
             }}
           />
-          Indie micro-SaaS · Kerala, India
+            A solo developer building focused tools for real problems.
         </div>
 
         {/* Title */}

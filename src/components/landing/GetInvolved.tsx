@@ -70,7 +70,7 @@ export default function GetInvolved({ githubUrl, email }: Props) {
                 </svg>
               }
               title="Contribute"
-              description="Statuspage is open source. See a bug, have a feature idea, or want to improve docs — PRs are very welcome."
+              description="Some of what I build is open source. If something catches your eye — pick up an issue, suggest a feature, or just poke around the code."
               linkHref={githubUrl}
               linkLabel="View on GitHub"
               external
