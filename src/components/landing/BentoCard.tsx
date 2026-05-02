@@ -91,7 +91,7 @@ export default function BentoCard({ project }: Props) {
                   border: '1px solid var(--green-border)',
                 }
               : {
-                  color: 'var(--text-muted)',
+                  color: 'var(--text-dim)',
                   background: 'var(--bg3)',
                   border: '1px solid var(--border)',
                 }),
@@ -157,7 +157,7 @@ export default function BentoCard({ project }: Props) {
                   fontWeight: 600,
                   letterSpacing: '0.06em',
                   textTransform: 'uppercase',
-                  color: 'var(--text-muted)',
+                  color: 'var(--text-dim)',
                   background: 'var(--bg3)',
                   border: '1px solid var(--border)',
                   borderRadius: 4,
